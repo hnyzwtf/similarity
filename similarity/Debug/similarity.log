@@ -1,0 +1,27 @@
+﻿生成启动时间为 2015/9/14 星期一 22:43:21。
+     1>项目“E:\work\Visual Studio 2010\Projects\similarity\similarity\similarity.vcxproj”在节点 2 上(build 个目标)。
+     1>InitializeBuildStatus:
+         正在创建“Debug\similarity.unsuccessfulbuild”，因为已指定“AlwaysCreate”。
+       ClCompile:
+         D:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /I"C:\gdal-1.4.2\include" /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D MPICH_SKIP_MPICXX /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt main.cpp
+         main.cpp
+     1>e:\work\visual studio 2010\projects\similarity\similarity\main.cpp(114): warning C4018: “<”: 有符号/无符号不匹配
+     1>e:\work\visual studio 2010\projects\similarity\similarity\main.cpp(350): warning C4018: “<”: 有符号/无符号不匹配
+       Link:
+         D:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"E:\work\Visual Studio 2010\Projects\similarity\Debug\similarity.exe" /INCREMENTAL /NOLOGO /LIBPATH:"C:\gdal-1.4.2\lib" gdal_i.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /ManifestFile:"Debug\similarity.exe.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"E:\work\Visual Studio 2010\Projects\similarity\Debug\similarity.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"E:\work\Visual Studio 2010\Projects\similarity\Debug\similarity.lib" /MACHINE:X86 Debug\AscGrid.obj
+         Debug\AttributeRule.obj
+         Debug\CategoryIntegration.obj
+         Debug\main.obj
+         Debug\ParallelSBMp.obj
+         Debug\SampleIntegration.obj
+         similarity.vcxproj -> E:\work\Visual Studio 2010\Projects\similarity\Debug\similarity.exe
+       Manifest:
+         C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\mt.exe /nologo /verbose /out:"E:\work\Visual Studio 2010\Projects\similarity\Debug\similarity.exe.manifest" /manifest Debug\similarity.exe.intermediate.manifest
+       FinalizeBuildStatus:
+         正在删除文件“Debug\similarity.unsuccessfulbuild”。
+         正在对“Debug\similarity.lastbuildstate”执行 Touch 任务。
+     1>已完成生成项目“E:\work\Visual Studio 2010\Projects\similarity\similarity\similarity.vcxproj”(build 个目标)的操作。
+
+生成成功。
+
+已用时间 00:00:00.96

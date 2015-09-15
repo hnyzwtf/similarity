@@ -1,0 +1,15 @@
+﻿生成启动时间为 2015/9/10 星期四 20:21:13。
+     1>项目“E:\work\Visual Studio 2010\Projects\similarity\similarity\similarity.vcxproj”在节点 2 上(build 个目标)。
+     1>PrepareForBuild:
+         正在创建目录“E:\work\Visual Studio 2010\Projects\similarity\x64\Debug\”。
+       InitializeBuildStatus:
+         正在创建“x64\Debug\similarity.unsuccessfulbuild”，因为已指定“AlwaysCreate”。
+       ClCompile:
+         D:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\x86_amd64\CL.exe /c /Zi /nologo /W3 /WX- /Od /D WIN32 /D _DEBUG /D _CONSOLE /D MPICH_SKIP_MPICXX /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"x64\Debug\\" /Fd"x64\Debug\vc100.pdb" /Gd /TP /errorReport:prompt main.cpp
+         main.cpp
+     1>main.cpp(10): fatal error C1083: 无法打开包括文件:“gdal.h”: No such file or directory
+     1>已完成生成项目“E:\work\Visual Studio 2010\Projects\similarity\similarity\similarity.vcxproj”(build 个目标)的操作 - 失败。
+
+生成失败。
+
+已用时间 00:00:00.51

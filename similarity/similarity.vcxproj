@@ -156,6 +156,7 @@
     <ClInclude Include="AttributeRule.h" />
     <ClInclude Include="CategoryIntegration.h" />
     <ClInclude Include="ParallelSBMp.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="SampleIntegration.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

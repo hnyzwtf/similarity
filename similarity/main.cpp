@@ -82,22 +82,24 @@ int *getCount(double **category2DValues, int categoryLyrCnt, double *categoryNoD
 	return categoryCounter;
 }
 
-int main(int argc, char *argv[])
+int main(int argc, char **argv)
 {
 	GDALAllRegister();
-	// the input parameter
+	
+	 //the input parameter
 	char *environLyrsPath = argv[1];
-	char *sample = argv[2]; //我们只输入一个样点的坐标,输入的形式为"x,y"
-	char * attriRules = argv[3];// Geology?Boolean#Climate?Gower#Terrain?Gower#Climate?Gower
-    char * threshold = argv[4];
-    char * simiPath = argv[5];//生成的相似度图层的路径
-    char * unLayerPath = argv[6];//生成的不确定性图层的路径
-    const char *categoryIntegrationMethod = "Limit";
-    const char *sampleIntegrationMethod = "Limit";
-
+	char *sample = argv[2]; 
+	char * attriRules = argv[3];
+	char * threshold = argv[4];
+	char * simiPath = argv[5];
+	char * unLayerPath = argv[6];
+		
     char *uncertaintyThreshold = threshold;
     char *simiLayerPath = simiPath;
     char *uncertaintyLayerPath = unLayerPath;
+	const char *categoryIntegrationMethod = "Limit";
+	const char *sampleIntegrationMethod = "Limit";
+	cout<<argc<<endl;
     // the count of input layer
     int climateLyrCnt = 0;
     int geologyLyrCnt = 0;
@@ -107,10 +109,11 @@ int main(int argc, char *argv[])
     int totalRows = 0;
     int totalCols = 0;
 // attribute rules
+	 
     vector<string> attributeRules;// 以#分割我们输入的规则
     string attriRulesList = string(attriRules);
 	parseStr(attriRulesList,'#',attributeRules);
-    vector<string> typeOfLayers;
+   vector<string> typeOfLayers;
     for(int i=0; i<attributeRules.size(); i++)
     {
         vector<string> ruleParameterArray;
@@ -128,6 +131,7 @@ int main(int argc, char *argv[])
         else if(type == "Other")
             otherLyrCnt++;
     }
+	
     // environment layers
     AscGrid *climateLyrs = NULL;
     AscGrid *geologyLyrs = NULL;
@@ -146,7 +150,7 @@ int main(int argc, char *argv[])
     double *sampleTerrainV = NULL;
     double *sampleVegeV = NULL;
     double *sampleOtherV = NULL;
-    double *sampleLayerV = NULL;
+    //double *sampleLayerV = NULL;
 
     double noData = -9999;
     double lowerLeftY;
@@ -309,6 +313,7 @@ int main(int argc, char *argv[])
         lowerLeftY = otherLyrs[0].getYCor();
         cellSize = otherLyrs[0].getCellSize();
     }
+
      // obtain the x and y of the input sample
     vector<string> sampleCoordinate;
     parseStr(string(sample), ',', sampleCoordinate);
@@ -318,10 +323,18 @@ int main(int argc, char *argv[])
     double curY = string_to_double(sampleY);
     int rowIndex = totalRows - (int)((curY - lowerLeftY)/cellSize)-1;  // the position of Y in raster
     int colIndex = (int)((curX - lowerLeftX)/cellSize); // the position of X in raster
+
+	sampleClimateV = new double[climateLyrCnt];
+	sampleGeologyV = new double[geologyLyrCnt];
+	sampleTerrainV = new double[terrainLyrCnt];
+	sampleVegeV = new double[vegeLyrCnt];
+	sampleOtherV = new double[otherLyrCnt];
+
     for (int i = 0; i < climateLyrCnt; i++)
     {
         sampleClimateV[i] = climateLyrs[i].values[rowIndex][colIndex];
     }
+	
     for (int i = 0; i < geologyLyrCnt; i++)
     {
         sampleGeologyV[i] = geologyLyrs[i].values[rowIndex][colIndex];
@@ -462,6 +475,17 @@ int main(int argc, char *argv[])
 	delete[] vegeStd;
 	delete[] otherStd;
 
+	delete[] climateSum;
+	delete[] climateCount;
+	delete[] geologySum;
+	delete[] geologyCount;
+	delete[] terrainSum;
+	delete[] terrainCount;
+	delete[] vegeSum;
+	delete[] vegeCount;
+	delete[] otherSum;
+	delete[] otherCount;
+
 	// release memory
 
 	if(climateLyrs != NULL)
@@ -496,6 +520,29 @@ int main(int argc, char *argv[])
 		delete[] sampleVegeV;
 	if(sampleOtherV != NULL)
 		delete[] sampleOtherV;
+
+	if (climate2DValues != NULL)
+	{
+		delete[] climate2DValues;
+	}
+	if (geology2DValues != NULL)
+	{
+		delete[] geology2DValues;
+	}
+	if (terrain2DValues != NULL)
+	{
+		delete[] terrain2DValues;
+	}
+	if (vege2DValues != NULL)
+	{
+		delete[] vege2DValues;
+	}
+	if (other2DValues != NULL)
+	{
+		delete[] other2DValues;
+	}
+	
+	//getchar();
 	return 0;
 
 }

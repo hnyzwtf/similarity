@@ -101,8 +101,6 @@ void ParallelSBMp::getPropertyMap(double *climateStd,double *geoStd,double *terr
 			 for(int colIdx = 0; colIdx < cols; colIdx++){
 				double MaxSimilarity = 0;
 				double SumSimilarity = 0;
-				double SumSimilarityValue = 0;
-				double MaxValue = -999999;
 				// climate
 				for(int attriDataLyrIdx = 0; attriDataLyrIdx < ClimateLyrCnt; attriDataLyrIdx++){
 					double gridV = climate2Dvalues[attriDataLyrIdx][rowIdx * cols + colIdx];

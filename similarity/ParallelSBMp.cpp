@@ -184,20 +184,21 @@ void ParallelSBMp::getPropertyMap(double *climateStd,double *geoStd,double *terr
 
 					int count = 5;
 					//此函数用来综合某个样点与某个待推测点的多个类别的相似度
-					double similarityVals = sampleIntegration.GetSampleSimilarity(CurrentCellAttributeSimilarities, count, NumOfLayersInCategories);                    			
+					double similarity = sampleIntegration.GetSampleSimilarity(CurrentCellAttributeSimilarities, count, NumOfLayersInCategories);                    			
 				
-					if (similarityVals >= MaxSimilarity)
+					if (similarity >= MaxSimilarity)
 					{
-						MaxSimilarity = similarityVals;
+						MaxSimilarity = similarity;
 					}							
 
 				double uncertainty = 1 - MaxSimilarity;
 				if ( uncertainty < this->uncertaintyThreshold ){
 					uncertaintyVals[rowIdx][colIdx] = uncertainty;
+					similarityVals[rowIdx][colIdx] = similarity;
 			
 				}else{
 					uncertaintyVals[rowIdx][colIdx] = noData;
-
+					similarityVals[rowIdx][colIdx] = noData;
 				}		  
 			}//end of for
 		}// end of for		

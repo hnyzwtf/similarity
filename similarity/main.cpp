@@ -99,7 +99,7 @@ int main(int argc, char **argv)
     char *uncertaintyLayerPath = unLayerPath;
 	const char *categoryIntegrationMethod = "Limit";
 	const char *sampleIntegrationMethod = "Limit";
-	cout<<argc<<endl;
+	
     // the count of input layer
     int climateLyrCnt = 0;
     int geologyLyrCnt = 0;

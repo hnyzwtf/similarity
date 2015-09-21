@@ -97,107 +97,108 @@ void ParallelSBMp::getPropertyMap(double *climateStd,double *geoStd,double *terr
 		double* VegetationSimilarities = new double[VegeLyrCnt];
 		double* OthersSimilarities = new double[OtherLyrCnt];		
 //=================================================================================================================================
-		for(int rowIdx = 0; rowIdx < rows; rowIdx++){
-			 for(int colIdx = 0; colIdx < cols; colIdx++){
-				double MaxSimilarity = 0;
-				double SumSimilarity = 0;
-				// climate
-				for(int attriDataLyrIdx = 0; attriDataLyrIdx < ClimateLyrCnt; attriDataLyrIdx++){
-					double gridV = climate2Dvalues[attriDataLyrIdx][rowIdx * cols + colIdx];
-					if(abs(gridV - climateNoData[attriDataLyrIdx])< VERY_SMALL){
-						ClimateSimilarities[attriDataLyrIdx] = -9999;
-					}else{
-							double sampleV = sampleClimateV[attriDataLyrIdx];//栅格图像在样点位置上的数值
-							double range = climateVRange[attriDataLyrIdx];
-							ClimateSimilarities[attriDataLyrIdx] = climateRules[attriDataLyrIdx].getAttributeSimilarity(gridV,sampleV,range,climateSum[attriDataLyrIdx],climateCount[attriDataLyrIdx],climateStd[attriDataLyrIdx]);                                 
+		for(int rowIdx = 0; rowIdx < rows; rowIdx++)
+		{
+			 for(int colIdx = 0; colIdx < cols; colIdx++)
+			 {
+					double MaxSimilarity = 0;
+					// climate
+					for(int attriDataLyrIdx = 0; attriDataLyrIdx < ClimateLyrCnt; attriDataLyrIdx++){
+						double gridV = climate2Dvalues[attriDataLyrIdx][rowIdx * cols + colIdx];
+						if(abs(gridV - climateNoData[attriDataLyrIdx])< VERY_SMALL){
+							ClimateSimilarities[attriDataLyrIdx] = -9999;
+						}else{
+								double sampleV = sampleClimateV[attriDataLyrIdx];//栅格图像在样点位置上的数值
+								double range = climateVRange[attriDataLyrIdx];
+								ClimateSimilarities[attriDataLyrIdx] = climateRules[attriDataLyrIdx].getAttributeSimilarity(gridV,sampleV,range,climateSum[attriDataLyrIdx],climateCount[attriDataLyrIdx],climateStd[attriDataLyrIdx]);                                 
+							}
+					}
+					double FinalClimateSimilarity = catIntegration.GetCategorySimilarity(ClimateSimilarities, ClimateLyrCnt);
+					CurrentCellAttributeSimilarities[0] = FinalClimateSimilarity;
+					NumOfLayersInCategories[0] = ClimateLyrCnt;
+					// geology
+					for(int attriDataLyrIdx = 0; attriDataLyrIdx < GeogLyrCnt; attriDataLyrIdx++){                      
+						double gridV = geo2Dvalues[attriDataLyrIdx][rowIdx * cols + colIdx];
+						if(abs(gridV - geoNoData[attriDataLyrIdx])< VERY_SMALL){
+							GeologySimilarities[attriDataLyrIdx] = -9999;
+						}else{
+
+							double sampleV = sampleGeologyV[attriDataLyrIdx];
+							double range = geologyVRange[attriDataLyrIdx];
+							GeologySimilarities[attriDataLyrIdx] = geologyRules[attriDataLyrIdx].getAttributeSimilarity(gridV,sampleV,range,geologySum[attriDataLyrIdx],geologyCount[attriDataLyrIdx],geoStd[attriDataLyrIdx]);
 						}
-				}
-				double FinalClimateSimilarity = catIntegration.GetCategorySimilarity(ClimateSimilarities, ClimateLyrCnt);
-				CurrentCellAttributeSimilarities[0] = FinalClimateSimilarity;
-				NumOfLayersInCategories[0] = ClimateLyrCnt;
-				// geology
-				for(int attriDataLyrIdx = 0; attriDataLyrIdx < GeogLyrCnt; attriDataLyrIdx++){                      
-					double gridV = geo2Dvalues[attriDataLyrIdx][rowIdx * cols + colIdx];
-					if(abs(gridV - geoNoData[attriDataLyrIdx])< VERY_SMALL){
-						GeologySimilarities[attriDataLyrIdx] = -9999;
-					}else{
 
-						double sampleV = sampleGeologyV[attriDataLyrIdx];
-						double range = geologyVRange[attriDataLyrIdx];
-						GeologySimilarities[attriDataLyrIdx] = geologyRules[attriDataLyrIdx].getAttributeSimilarity(gridV,sampleV,range,geologySum[attriDataLyrIdx],geologyCount[attriDataLyrIdx],geoStd[attriDataLyrIdx]);
 					}
 
-				}
-
-				FinalClimateSimilarity = catIntegration.GetCategorySimilarity(GeologySimilarities, GeogLyrCnt);
-				CurrentCellAttributeSimilarities[1] = FinalClimateSimilarity;
-				NumOfLayersInCategories[1] = GeogLyrCnt;
-				//terrain
-				for(int attriDataLyrIdx = 0; attriDataLyrIdx < TerrainLyrCnt; attriDataLyrIdx++){
-					double gridV = terrain2Dvalues[attriDataLyrIdx][rowIdx * cols + colIdx];
-					if(abs(gridV - terrainNoData[attriDataLyrIdx])< VERY_SMALL){
-						TerrainSimilarities[attriDataLyrIdx] = -9999;							
-					}else{
-						double sampleV = sampleTerrainV[attriDataLyrIdx];
-						double range = terrainVRange[attriDataLyrIdx];
-						TerrainSimilarities[attriDataLyrIdx] = terrainRules[attriDataLyrIdx].getAttributeSimilarity(gridV,sampleV,range,terrainSum[attriDataLyrIdx],terrainCount[attriDataLyrIdx],terrainStd[attriDataLyrIdx]);
-					}
-				}
-
-				FinalClimateSimilarity = catIntegration.GetCategorySimilarity(TerrainSimilarities, TerrainLyrCnt);                    
-				CurrentCellAttributeSimilarities[2] = FinalClimateSimilarity;
-				NumOfLayersInCategories[2] = TerrainLyrCnt;
-				//vegetation
-				for(int attriDataLyrIdx = 0; attriDataLyrIdx < VegeLyrCnt; attriDataLyrIdx++){                 
-					double gridV = vege2Dvalues[attriDataLyrIdx][rowIdx * cols + colIdx];
-					if(abs(gridV - vegetationNoData[attriDataLyrIdx])< VERY_SMALL){
-						VegetationSimilarities[attriDataLyrIdx] = -9999;
-					}else{
-						double sampleV = sampleVegetationV[attriDataLyrIdx];
-						double range = vegeVRange[attriDataLyrIdx];							
-						VegetationSimilarities[attriDataLyrIdx] = vegetationRules[attriDataLyrIdx].getAttributeSimilarity(gridV,sampleV,range,vegetationSum[attriDataLyrIdx],vegetationCount[attriDataLyrIdx],vegetationStd[attriDataLyrIdx]);
+					FinalClimateSimilarity = catIntegration.GetCategorySimilarity(GeologySimilarities, GeogLyrCnt);
+					CurrentCellAttributeSimilarities[1] = FinalClimateSimilarity;
+					NumOfLayersInCategories[1] = GeogLyrCnt;
+					//terrain
+					for(int attriDataLyrIdx = 0; attriDataLyrIdx < TerrainLyrCnt; attriDataLyrIdx++){
+						double gridV = terrain2Dvalues[attriDataLyrIdx][rowIdx * cols + colIdx];
+						if(abs(gridV - terrainNoData[attriDataLyrIdx])< VERY_SMALL){
+							TerrainSimilarities[attriDataLyrIdx] = -9999;							
+						}else{
+							double sampleV = sampleTerrainV[attriDataLyrIdx];
+							double range = terrainVRange[attriDataLyrIdx];
+							TerrainSimilarities[attriDataLyrIdx] = terrainRules[attriDataLyrIdx].getAttributeSimilarity(gridV,sampleV,range,terrainSum[attriDataLyrIdx],terrainCount[attriDataLyrIdx],terrainStd[attriDataLyrIdx]);
+						}
 					}
 
-				}
+					FinalClimateSimilarity = catIntegration.GetCategorySimilarity(TerrainSimilarities, TerrainLyrCnt);                    
+					CurrentCellAttributeSimilarities[2] = FinalClimateSimilarity;
+					NumOfLayersInCategories[2] = TerrainLyrCnt;
+					//vegetation
+					for(int attriDataLyrIdx = 0; attriDataLyrIdx < VegeLyrCnt; attriDataLyrIdx++){                 
+						double gridV = vege2Dvalues[attriDataLyrIdx][rowIdx * cols + colIdx];
+						if(abs(gridV - vegetationNoData[attriDataLyrIdx])< VERY_SMALL){
+							VegetationSimilarities[attriDataLyrIdx] = -9999;
+						}else{
+							double sampleV = sampleVegetationV[attriDataLyrIdx];
+							double range = vegeVRange[attriDataLyrIdx];							
+							VegetationSimilarities[attriDataLyrIdx] = vegetationRules[attriDataLyrIdx].getAttributeSimilarity(gridV,sampleV,range,vegetationSum[attriDataLyrIdx],vegetationCount[attriDataLyrIdx],vegetationStd[attriDataLyrIdx]);
+						}
 
-				FinalClimateSimilarity = catIntegration.GetCategorySimilarity(VegetationSimilarities, VegeLyrCnt);
-
-				CurrentCellAttributeSimilarities[3] = FinalClimateSimilarity;
-				NumOfLayersInCategories[3] = VegeLyrCnt;
-				// others
-				for(int attriDataLyrIdx = 0; attriDataLyrIdx < OtherLyrCnt; attriDataLyrIdx++){                        
-					double gridV = other2Dvalues[attriDataLyrIdx][rowIdx * cols + colIdx];
-					if(abs(gridV - otherNoData[attriDataLyrIdx])< VERY_SMALL){
-						OthersSimilarities[attriDataLyrIdx] = -9999;
-					}else{
-
-						double sampleV = sampleOtherV[attriDataLyrIdx];
-						double range = otherVRange[attriDataLyrIdx];							
-						OthersSimilarities[attriDataLyrIdx] = otherRules[attriDataLyrIdx].getAttributeSimilarity(gridV,sampleV,range,otherSum[attriDataLyrIdx],otherCount[attriDataLyrIdx],otherStd[attriDataLyrIdx]);
 					}
 
-				}
-				FinalClimateSimilarity = catIntegration.GetCategorySimilarity(OthersSimilarities, OtherLyrCnt);
-				CurrentCellAttributeSimilarities[4] = FinalClimateSimilarity;
-				NumOfLayersInCategories[4] = OtherLyrCnt;
+					FinalClimateSimilarity = catIntegration.GetCategorySimilarity(VegetationSimilarities, VegeLyrCnt);
 
-				int count = 5;
-				//此函数用来综合某个样点与某个待推测点的多个类别的相似度
-				double similarityVals = sampleIntegration.GetSampleSimilarity(CurrentCellAttributeSimilarities, count, NumOfLayersInCategories);                    			
+					CurrentCellAttributeSimilarities[3] = FinalClimateSimilarity;
+					NumOfLayersInCategories[3] = VegeLyrCnt;
+					// others
+					for(int attriDataLyrIdx = 0; attriDataLyrIdx < OtherLyrCnt; attriDataLyrIdx++){                        
+						double gridV = other2Dvalues[attriDataLyrIdx][rowIdx * cols + colIdx];
+						if(abs(gridV - otherNoData[attriDataLyrIdx])< VERY_SMALL){
+							OthersSimilarities[attriDataLyrIdx] = -9999;
+						}else{
+
+							double sampleV = sampleOtherV[attriDataLyrIdx];
+							double range = otherVRange[attriDataLyrIdx];							
+							OthersSimilarities[attriDataLyrIdx] = otherRules[attriDataLyrIdx].getAttributeSimilarity(gridV,sampleV,range,otherSum[attriDataLyrIdx],otherCount[attriDataLyrIdx],otherStd[attriDataLyrIdx]);
+						}
+
+					}
+					FinalClimateSimilarity = catIntegration.GetCategorySimilarity(OthersSimilarities, OtherLyrCnt);
+					CurrentCellAttributeSimilarities[4] = FinalClimateSimilarity;
+					NumOfLayersInCategories[4] = OtherLyrCnt;
+
+					int count = 5;
+					//此函数用来综合某个样点与某个待推测点的多个类别的相似度
+					double similarityVals = sampleIntegration.GetSampleSimilarity(CurrentCellAttributeSimilarities, count, NumOfLayersInCategories);                    			
 				
-				if (similarityVals >= MaxSimilarity)
-				{
-					MaxSimilarity = similarityVals;
-				}							
+					if (similarityVals >= MaxSimilarity)
+					{
+						MaxSimilarity = similarityVals;
+					}							
 
-			double Uncertainty = 1 - MaxSimilarity;
-			if ( Uncertainty < this->uncertaintyThreshold ){
-				uncertaintyVals[rowIdx][colIdx] = Uncertainty;
+				double uncertainty = 1 - MaxSimilarity;
+				if ( uncertainty < this->uncertaintyThreshold ){
+					uncertaintyVals[rowIdx][colIdx] = uncertainty;
 			
-			}else{
-				uncertaintyVals[rowIdx][colIdx] = noData;
+				}else{
+					uncertaintyVals[rowIdx][colIdx] = noData;
 
-			}		  
+				}		  
 			}//end of for
 		}// end of for		
 		delete[] climateRules;

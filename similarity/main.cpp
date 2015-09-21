@@ -440,6 +440,7 @@ int main(int argc, char **argv)
 	ParallelSBMp inf(sampleClimateV, sampleGeologyV, sampleTerrainV,sampleVegeV, sampleOtherV,
 		attributeRules,
 		climateVRange,geologyVRange,terrainVRange,vegeVRange,otherVRange,
+		rowIndex, colIndex,
 		categoryIntegrationMethod, sampleIntegrationMethod,uncertaintyThreshold
 		);
 

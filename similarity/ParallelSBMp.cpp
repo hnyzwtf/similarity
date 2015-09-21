@@ -22,6 +22,7 @@ ParallelSBMp::ParallelSBMp(){
 ParallelSBMp::ParallelSBMp(double * sampleClimateV, double * sampleGeologyV, double * sampleTerrainV,double * sampleVegetationV, double * sampleOtherV,
 			vector<string> &AttriRules,
              double * climateVRange,double * geologyVRange,double * terrainVRange,double * vegeVRange,double * otherVRange,
+			 int rowIndex, int colIndex,
              string catIntegrationMethod, string sampleIntegrationMethod,  string uncertaintyThreshold
 			 ):attriRules(AttriRules.size()),catIntegration(catIntegrationMethod),sampleIntegration(sampleIntegrationMethod)
 {
@@ -36,6 +37,9 @@ ParallelSBMp::ParallelSBMp(double * sampleClimateV, double * sampleGeologyV, dou
 	 this->terrainVRange = terrainVRange;
 	 this->vegeVRange = vegeVRange;
 	 this->otherVRange = otherVRange;
+
+	 this->rowIndex = rowIndex;
+	 this->colIndex = colIndex;
 
 	 for (int i = 0; i < AttriRules.size(); i ++){
 			vector<string> ruleParameterArray;
@@ -199,9 +203,18 @@ void ParallelSBMp::getPropertyMap(double *climateStd,double *geoStd,double *terr
 				}else{
 					uncertaintyVals[rowIdx][colIdx] = noData;
 					similarityVals[rowIdx][colIdx] = noData;
-				}		  
-			}//end of for
-		}// end of for		
+				}
+				if (similarityVals[rowIndex][colIndex] == similarityVals[rowIdx][colIdx])
+				{
+					cout<<"this is the most similar point: "<<rowIdx<<","<<colIdx<<endl;
+				}
+				if (abs(similarityVals[rowIndex][colIndex] - similarityVals[rowIdx][colIdx]) < 0.01)
+				{
+					cout<<"These are similar points(backup): "<<rowIdx<<","<<colIdx<<endl;
+				}
+			}//end of for(int colIdx = 0; colIdx < cols; colIdx++)
+		}// end of for(int rowIdx = 0; rowIdx < rows; rowIdx++)
+		getchar();
 		delete[] climateRules;
 		delete[] geologyRules;
 		delete[] terrainRules;

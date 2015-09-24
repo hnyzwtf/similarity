@@ -11,7 +11,7 @@ AscGrid::AscGrid(){
 	subCols = -9999;
 	subRows = -9999;
     xCor = 0; //top left x
-    yCor = 0; 
+    yCor = 0; // top left y
 	xCor_sub = -9999;
 	yCor_sub = -9999;
     cellSize = 1;
@@ -208,7 +208,7 @@ void AscGrid::readAscGridGDAL(string filename){// added by jiangjc
 		//read in the file header information
 		totalRows = poBandsrc->GetYSize();
 		totalCols = poBandsrc->GetXSize();
-		xCor = pTransform[0];
+		xCor = pTransform[0];// 左上角坐标
 		yCor = pTransform[3] - pTransform[1]*totalRows;// 由左上角变为左下角
         cellSize = pTransform[1];// w-e pixel resolution
 		noDataVal = poBandsrc->GetNoDataValue();

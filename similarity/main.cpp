@@ -315,6 +315,13 @@ int main(int argc, char **argv)
     }
 
      // obtain the x and y of the input sample
+	/*
+	图像中以左上角为起点，起点向右为x轴，逐渐增大，起点向下为y轴，逐渐减小。本程序中（见AscGrid.cpp）xCor，yCor为左上角的坐标。其中yCor在AscGrid.cpp中
+	readAscGridGDAL等相关函数中被转换为了左下角的y坐标（xCor = pTransform[0];   yCor = pTransform[3] - pTransform[1]*totalRows;// 由左上角变为左下角）
+	这时候我们的起点就是笛卡尔坐标系中的原点了，向右为x轴，逐渐增大，向上为y轴，逐渐增大。又左上角和左下角的x坐标是一样的，
+	因此，xCor,yCor就可以当做是左下角坐标了即lowerLeftX，lowerLeftY
+	我们在将样点的地理坐标转为图像中的行列位置时就以左下角为起点参考了。
+	*/
     vector<string> sampleCoordinate;
     parseStr(string(sample), ',', sampleCoordinate);
     string sampleX = sampleCoordinate[0];
@@ -440,7 +447,7 @@ int main(int argc, char **argv)
 	ParallelSBMp inf(sampleClimateV, sampleGeologyV, sampleTerrainV,sampleVegeV, sampleOtherV,
 		attributeRules,
 		climateVRange,geologyVRange,terrainVRange,vegeVRange,otherVRange,
-		rowIndex, colIndex,
+		rowIndex, colIndex, lowerLeftX, lowerLeftY, cellSize, totalRows,
 		categoryIntegrationMethod, sampleIntegrationMethod,uncertaintyThreshold
 		);
 

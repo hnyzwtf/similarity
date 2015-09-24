@@ -34,6 +34,10 @@ private:
 
 	int rowIndex;
 	int colIndex;
+	double lowerLeftX;
+	double lowerLeftY;
+	double cellSize;
+	int totalRows;
 
 	double string_to_double( const std::string& s );
 
@@ -42,7 +46,7 @@ public:
 	ParallelSBMp(double * sampleClimateV, double * sampleGeologyV, double * sampleTerrainV,
 		double * sampleVegetationV, double * sampleOtherV, vector<string> &AttriRules,
 		double * climateVRange,double * geologyVRange,double * terrainVRange,double * vegeVRange,double * otherVRange,
-		int rowIndex, int colIndex,
+		int rowIndex, int colIndex, double lowerLeftX, double lowerLeftY, double cellSize, int totalRows,
 		string catIntegrationMethod, string sampleIntegrationMethod, string uncertaintyThreshold);
 
 	void getPropertyMap(double *climateStd,double *geoStd,double *terrainStd,double *vegetationStd,double *otherStd,

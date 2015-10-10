@@ -146,7 +146,9 @@
   <ItemGroup>
     <ClCompile Include="AscGrid.cpp" />
     <ClCompile Include="AttributeRule.cpp" />
+    <ClCompile Include="BasicParameter.cpp" />
     <ClCompile Include="CategoryIntegration.cpp" />
+    <ClCompile Include="Distance.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="ParallelSBMp.cpp" />
     <ClCompile Include="SampleIntegration.cpp" />
@@ -154,7 +156,9 @@
   <ItemGroup>
     <ClInclude Include="AscGrid.h" />
     <ClInclude Include="AttributeRule.h" />
+    <ClInclude Include="BasicParameter.h" />
     <ClInclude Include="CategoryIntegration.h" />
+    <ClInclude Include="Distance.h" />
     <ClInclude Include="ParallelSBMp.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="SampleIntegration.h" />

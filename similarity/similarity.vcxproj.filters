@@ -33,6 +33,12 @@
     <ClCompile Include="SampleIntegration.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="BasicParameter.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Distance.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AscGrid.h">
@@ -51,6 +57,12 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="resource.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="BasicParameter.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Distance.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

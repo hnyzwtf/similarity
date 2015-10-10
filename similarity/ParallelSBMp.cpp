@@ -1,5 +1,6 @@
 #include <sstream>
 #include "ParallelSBMp.h"
+#include "Distance.h"
 #include <iostream>
 #include <math.h>
 #include <fstream>
@@ -22,7 +23,7 @@ ParallelSBMp::ParallelSBMp(){
 ParallelSBMp::ParallelSBMp(double * sampleClimateV, double * sampleGeologyV, double * sampleTerrainV,double * sampleVegetationV, double * sampleOtherV,
 			vector<string> &AttriRules,
              double * climateVRange,double * geologyVRange,double * terrainVRange,double * vegeVRange,double * otherVRange,
-			 int rowIndex, int colIndex, double lowerLeftX, double lowerLeftY, double cellSize, int totalRows,
+			 int rowIndex, int colIndex, double curX, double curY, double lowerLeftX, double lowerLeftY, double cellSize, int totalRows,
              string catIntegrationMethod, string sampleIntegrationMethod,  string uncertaintyThreshold
 			 ):attriRules(AttriRules.size()),catIntegration(catIntegrationMethod),sampleIntegration(sampleIntegrationMethod)
 {
@@ -40,6 +41,8 @@ ParallelSBMp::ParallelSBMp(double * sampleClimateV, double * sampleGeologyV, dou
 
 	 this->rowIndex = rowIndex;
 	 this->colIndex = colIndex;
+	 this->curX = curX;
+	 this->curY = curY;
 	 this->lowerLeftX = lowerLeftX;
 	 this->lowerLeftY = lowerLeftY;
 	 this->cellSize = cellSize;
@@ -105,8 +108,9 @@ void ParallelSBMp::getPropertyMap(double *climateStd,double *geoStd,double *terr
 		double* VegetationSimilarities = new double[VegeLyrCnt];
 		double* OthersSimilarities = new double[OtherLyrCnt];	
 
-		double curX;// 程序生成的可替代点的坐标
-		double curY;
+		double simiPointsX;// 程序生成的可替代点的坐标
+		double simiPointsY;
+		Distance distance;
 //=================================================================================================================================
 		for(int rowIdx = 0; rowIdx < rows; rowIdx++)
 		{
@@ -215,17 +219,22 @@ void ParallelSBMp::getPropertyMap(double *climateStd,double *geoStd,double *terr
 				/* 程序生成一个输入样点对所有待推测点的相似度图，即每一个相似度都代表着某点与此样点的代表程度，样点所在位置的
 				相似度就是“1”在这里我们认为，凡是相似度
 				 和数值“1”差值小于0.01的都是和样点最相似的。[rowIndex][colIndex]是样点在图像中的位置	*/	
-
-				if (abs(similarityVals[rowIndex][colIndex] - similarityVals[rowIdx][colIdx]) < 0.01)
+				
+				// rowIndex和colIndex是输入的样点的位置
+				if (abs(similarityVals[rowIndex][colIndex] - similarityVals[rowIdx][colIdx]) < 0.02)
 				{
-					curX = lowerLeftX + (double)colIdx * cellSize;
-					curY = lowerLeftY + (double)(totalRows - rowIdx - 1) * cellSize;
-					cout<<"These are similar points: "<<rowIdx<<","<<colIdx<<endl;
-					cout<<"These are similar points: "<<curX<<","<<curY<<endl;
+					simiPointsX = lowerLeftX + (double)(colIdx * cellSize);
+					simiPointsY = lowerLeftY + (double)(totalRows - rowIdx - 1) * cellSize;
+					//cout<<"These are similar points: "<<rowIdx<<","<<colIdx<<endl;
+					if (distance.getEucliDistance(curX, curY, simiPointsX, simiPointsY) < 100.0)
+					{
+						cout<<"these are the similarity points within 100m: "<<simiPointsX<<","<<simiPointsY<<endl;
+					}
+					
 				}
 			}//end of for(int colIdx = 0; colIdx < cols; colIdx++)
 		}// end of for(int rowIdx = 0; rowIdx < rows; rowIdx++)
-	
+		
 		delete[] climateRules;
 		delete[] geologyRules;
 		delete[] terrainRules;

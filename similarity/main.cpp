@@ -29,7 +29,7 @@ int main(int argc, char **argv)
 	BasicParameter inf(attriRules, environLyrsPath, sample, uncertaintyThreshold, simiLayerPath,
 		uncertaintyLayerPath, categoryIntegrationMethod,sampleIntegrationMethod);
 	inf.getBasicParameter();//wtf
-	//getchar();
+	getchar();
 	return 0;
 
 }

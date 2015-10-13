@@ -6,6 +6,7 @@
 #include "AscGrid.h"
 #include "AttributeRule.h"
 #include "ParallelSBMp.h"
+#include "NeighborSimi.h"
 #include <sstream>
 #include <fstream>
 #include <iomanip>

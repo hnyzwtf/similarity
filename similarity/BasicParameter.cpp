@@ -445,15 +445,29 @@ void BasicParameter::getBasicParameter()
 		climateSum, geologySum, terrainSum, vegeSum, otherSum,
 		climateCount, geologyCount, terrainCount, vegeCount, otherCount);//wtf
 
+	NeighborSimi inf2(sampleClimateV, sampleGeologyV, sampleTerrainV,sampleVegeV, sampleOtherV,
+		attributeRules,
+		climateVRange,geologyVRange,terrainVRange,vegeVRange,otherVRange,
+		rowIndex, colIndex, curX, curY, lowerLeftX, lowerLeftY, cellSize, totalRows,
+		categoryIntegrationMethod, sampleIntegrationMethod,uncertaintyThreshold
+		);
+	inf2.getNeighborAvgSimi(climateStd,geologyStd,terrainStd,vegeStd,otherStd,
+		climate2DValues, geology2DValues,terrain2DValues, vege2DValues, other2DValues,
+		similarityValues, uncertaintyValues,
+		climateLyrCnt, geologyLyrCnt, terrainLyrCnt, vegeLyrCnt, otherLyrCnt,totalRows, totalCols,
+		noData, climateNoData,geologyNoData,terrainNoData,vegeNoData,otherNoData,
+		climateSum, geologySum, terrainSum, vegeSum, otherSum,
+		climateCount, geologyCount, terrainCount, vegeCount, otherCount);//wtf
+
 	AscGrid similarityMap(totalCols, totalRows, lowerLeftX, lowerLeftY, cellSize, noData, similarityValues);
 	AscGrid uncertaintyMap(totalCols, totalRows, lowerLeftX, lowerLeftY, cellSize, noData, uncertaintyValues);
 	string similarityFile = simiLayerPath;
 	string uncertaintyFile = uncertaintyLayerPath;
 
-	similarityMap.createAscGridGADL(environLyrs[0],similarityFile);
+	/*similarityMap.createAscGridGADL(environLyrs[0],similarityFile);
 	similarityMap.writeAscGridGDAL(similarityFile);
 	uncertaintyMap.createAscGridGADL(environLyrs[0],uncertaintyFile);
-	uncertaintyMap.writeAscGridGDAL(uncertaintyFile);
+	uncertaintyMap.writeAscGridGDAL(uncertaintyFile);*/
 
 
 	delete[] similarityValues;

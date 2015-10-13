@@ -218,14 +218,15 @@ void ParallelSBMp::getPropertyMap(double *climateStd,double *geoStd,double *terr
 				}
 				/* 程序生成一个输入样点对所有待推测点的相似度图，即每一个相似度都代表着某点与此样点的代表程度，样点所在位置的
 				相似度就是“1”在这里我们认为，凡是相似度
-				 和数值“1”差值小于0.01的都是和样点最相似的。[rowIndex][colIndex]是样点在图像中的位置	*/	
+				 和数值“1”差值小于0.02的都是和样点最相似的。[rowIndex][colIndex]是样点在图像中的位置	*/	
 				
-				// rowIndex和colIndex是输入的样点的位置
+				// rowIndex和colIndex是输入的样点的位置，rowIdx和colIdx是栅格图像上每一个栅格点的行列号
 				if (abs(similarityVals[rowIndex][colIndex] - similarityVals[rowIdx][colIdx]) < 0.02)
 				{
 					simiPointsX = lowerLeftX + (double)(colIdx * cellSize);
 					simiPointsY = lowerLeftY + (double)(totalRows - rowIdx - 1) * cellSize;
 					//cout<<"These are similar points: "<<rowIdx<<","<<colIdx<<endl;
+					//选取距离不可采点100米范围内的点
 					if (distance.getEucliDistance(curX, curY, simiPointsX, simiPointsY) < 100.0)
 					{
 						cout<<"these are the similarity points within 100m: "<<simiPointsX<<","<<simiPointsY<<endl;

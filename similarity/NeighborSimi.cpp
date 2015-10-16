@@ -112,14 +112,16 @@ void NeighborSimi::getNeighborAvgSimi(double *climateStd,double *geoStd,double *
 		double simiPointsX;// 程序生成的可替代点的坐标
 		double simiPointsY;
 		Distance distance;
-		int sampleNeighborCnt = 0; //距离输入样点周围一定邻域内的像元个数
-		double sampleNeighborSum = 0; //距离输入样点周围一定邻域内所有像元相似度求和
-		double sampleNeighborAvg = 0; //距离输入样点周围x米内所有像元相似度求均值
+		
 		int candidateNeighborCnt = 0; //距离候选样点即可供选择的样点周围邻域内的像元个数		
 		double candidateSum = 0; //每个候选样点周围所有像元相似度的和	
 		vector <double> candidateNeighborAvg;//距离每个候选样点周围所有像元的相似度求平均，是每个候选样点相似度平均值的vector
 		vector<int> candidateRow;//候选样点在图像中的row，即行号
 		vector<int> candidateCol;
+		vector <double> candidateVariance;//候选样点的方差集合
+		double candidateVarianceCnt = 0;
+		double candidateVarianceSum = 0;
+		
 //=================================================================================================================================
 		for(int rowIdx = 0; rowIdx < rows; rowIdx++)
 		{
@@ -225,14 +227,7 @@ void NeighborSimi::getNeighborAvgSimi(double *climateStd,double *geoStd,double *
 					uncertaintyVals[rowIdx][colIdx] = noData;
 					similarityVals[rowIdx][colIdx] = noData;
 				}
-				// 计算输入样点周围一定邻域范围内相似度值的平均
-				// 语句中表示的是输入样点周围和样点行列号相差为8的栅格像元，计算均值时不能包含输入样点的相似度值，周围的相似度值不为空
-				if (abs(rowIdx-rowIndex) < 8 && abs(colIdx-colIndex) < 8 && (rowIdx != rowIndex) && (colIdx != colIndex)
-					&& similarityVals[rowIdx][colIdx] != noData)
-				{			
-					sampleNeighborCnt++;				
-					sampleNeighborSum += similarityVals[rowIdx][colIdx];
-				}
+						
 				// rowIndex和colIndex是输入的样点的位置，rowIdx和colIdx是栅格图像上每一个栅格点的行列号
 				// 如果图像中任意一点的相似度值和输入样点的相似度值之差小于0.02，就把此点作为候选样点
 				if (abs(similarityVals[rowIndex][colIndex] - similarityVals[rowIdx][colIdx]) < 0.02)
@@ -241,15 +236,12 @@ void NeighborSimi::getNeighborAvgSimi(double *climateStd,double *geoStd,double *
 					simiPointsY = lowerLeftY + (double)(totalRows - rowIdx - 1) * cellSize;
 					candidateRow.push_back(rowIdx);//将所有候选样点在图像上的行列号存入vector容器中
 					candidateCol.push_back(colIdx);
-					//cout<<"These are similar points: "<<rowIdx<<","<<colIdx<<endl;	
+					//cout<<simiPointsX<<","<<simiPointsY<<endl;	
 				}						
 			}//end of for(int colIdx = 0; colIdx < cols; colIdx++)
 		}// end of for(int rowIdx = 0; rowIdx < rows; rowIdx++)
 //=================================================================================================================================
-		sampleNeighborAvg = sampleNeighborSum/sampleNeighborCnt;
-		
-		cout<<"this is sampleNeighborAvg   "<<sampleNeighborAvg<<endl;
-
+	
 		for (int i = 0; i < candidateRow.size(); i++)// candidateRow.size()就是候选样点的个数
 		{	
 			candidateNeighborCnt = 0;
@@ -258,7 +250,8 @@ void NeighborSimi::getNeighborAvgSimi(double *climateStd,double *geoStd,double *
 			{
 				for(int colIdx = 0; colIdx < cols; colIdx++)
 				{
-					if (abs(rowIdx-candidateRow[i]) < 8 && abs(colIdx-candidateCol[i]) < 8 && (rowIdx != candidateRow[i]) && (colIdx != candidateCol[i])
+					// 语句中表示的是候选样点周围和此候选行列号相差为8的栅格像元，计算时不能包含候选样点的相似度值
+					if (abs(rowIdx-candidateRow[i]) < 10 && abs(colIdx-candidateCol[i]) < 10 && (rowIdx != candidateRow[i]) && (colIdx != candidateCol[i])
 						&& similarityVals[rowIdx][colIdx] != noData)
 					{			
 						candidateNeighborCnt++;				
@@ -270,8 +263,108 @@ void NeighborSimi::getNeighborAvgSimi(double *climateStd,double *geoStd,double *
 		}	
 		for (int i = 0; i < candidateNeighborAvg.size(); i++)
 		{
-			cout<<"this is candidateNeighborAvg--->"<<candidateNeighborAvg[i]<<endl;
+			cout<<"候选点周围邻域像元相似度的平均--->"<<candidateNeighborAvg[i]<<endl;
 		}
+		// 计算每个候选样点周围邻域相似度的方差
+		for (int i = 0; i < candidateRow.size(); i++)
+		{	
+			candidateVarianceCnt = 0;
+			candidateVarianceSum = 0;
+			for(int rowIdx = 0; rowIdx < rows; rowIdx++)
+			{
+				for(int colIdx = 0; colIdx < cols; colIdx++)
+				{
+					if (abs(rowIdx-candidateRow[i]) < 10 && abs(colIdx-candidateCol[i]) < 10 && (rowIdx != candidateRow[i]) && (colIdx != candidateCol[i])
+						&& similarityVals[rowIdx][colIdx] != noData)
+					{			
+						candidateVarianceCnt++;				
+						candidateVarianceSum += pow((similarityVals[rowIdx][colIdx] - candidateNeighborAvg[i]),2) ;
+					}
+				}
+			}//candidateNeighborAvg存放的就是每个候选样点周围栅格相似度的平均值，有多少个候选样点,就有多少个均值			
+			candidateVariance.push_back(candidateVarianceSum / candidateVarianceCnt);
+		}	
+		cout<<"-----------------------------------------------------"<<endl;
+		for (int i = 0; i < candidateVariance.size(); i++)
+		{
+			cout<<"候选点周围邻域像元相似度的方差--->"<<candidateVariance[i]<<endl;
+		}
+		// 对均值和方差结果进行排序，其中均值按照从大到小的顺序，如果有几个元素均值相等的话，他们对应的方差按从小到大排序
+		int candidateNum = candidateRow.size();
+		double temp;
+		for (int i = 1; i < candidateNum; i++)
+		{
+			for (int j = 0; j < candidateNum; j++)
+			{
+				if (candidateNeighborAvg[i] > candidateNeighborAvg[j])
+				{
+					temp = candidateNeighborAvg[i];
+					candidateNeighborAvg[i] = candidateNeighborAvg[j];
+					candidateNeighborAvg[j] = temp;
+					// 因为candidateRow,candidateCol,avg,variance里面的元素都要对应，因此，排序时平均值每个元素的位置发生了变化，相应的row,col,variance
+					//位置也要发生变化
+					temp = candidateVariance[i];
+					candidateVariance[i] = candidateVariance[j];
+					candidateVariance[j] = temp;
+
+					temp = candidateRow[i];
+					candidateRow[i] = candidateRow[j];
+					candidateRow[j] = temp;
+
+					temp = candidateCol[i];
+					candidateCol[i] = candidateCol[j];
+					candidateCol[j] = temp;
+				}
+				if (abs(candidateNeighborAvg[i] - candidateNeighborAvg[j]) < 0.00001)//如果两个元素相同
+				{
+					if (candidateVariance[i] < candidateVariance[j])//对方差进行从小到大的排序
+					{
+						temp = candidateNeighborAvg[i];
+						candidateNeighborAvg[i] = candidateNeighborAvg[j];
+						candidateNeighborAvg[j] = temp;
+
+						temp = candidateVariance[i];
+						candidateVariance[i] = candidateVariance[j];
+						candidateVariance[j] = temp;
+
+						temp = candidateRow[i];
+						candidateRow[i] = candidateRow[j];
+						candidateRow[j] = temp;
+
+						temp = candidateCol[i];
+						candidateCol[i] = candidateCol[j];
+						candidateCol[j] = temp;
+					}
+				}
+			}
+
+		}
+		for (int i = 0; i < candidateNum; i++)
+		{
+			cout<<candidateNeighborAvg[i]<<",";
+		}
+		cout<<endl;
+		cout<<"------------------------------------------------------------------------------------"<<endl;
+		for (int i = 0; i < candidateNum; i++)
+		{		
+			cout<<candidateVariance[i]<<",";
+		}
+		cout<<"------------------------------------------------------------------------------------"<<endl;
+		for (int i = 0; i < candidateNum; i++)
+		{
+			cout<<"("<<candidateRow[i]<<","<<candidateCol[i]<<")"<<",";
+		}
+	/*	int index = 0;
+		double min = 9999;
+		for (int i = 0; i < candidateVariance.size(); i++)
+		{		
+			if (abs(sampleVariance - candidateVariance[i]) < min)
+			{
+				min = abs(sampleVariance - candidateVariance[i]);
+				index = i;
+			}
+		}*/
+		
 
 		delete[] climateRules;
 		delete[] geologyRules;

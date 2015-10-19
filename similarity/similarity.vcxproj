@@ -152,6 +152,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="NeighborSimi.cpp" />
     <ClCompile Include="ParallelSBMp.cpp" />
+    <ClCompile Include="ReadCsv.cpp" />
     <ClCompile Include="SampleIntegration.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -162,6 +163,7 @@
     <ClInclude Include="Distance.h" />
     <ClInclude Include="NeighborSimi.h" />
     <ClInclude Include="ParallelSBMp.h" />
+    <ClInclude Include="ReadCsv.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="SampleIntegration.h" />
   </ItemGroup>

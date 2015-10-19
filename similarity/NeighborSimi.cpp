@@ -1,6 +1,7 @@
 #include <sstream>
 #include "NeighborSimi.h"
 #include "Distance.h"
+#include "ReadCsv.h"
 #include <iostream>
 #include <vector>
 #include <math.h>
@@ -109,9 +110,15 @@ void NeighborSimi::getNeighborAvgSimi(double *climateStd,double *geoStd,double *
 		double* VegetationSimilarities = new double[VegeLyrCnt];
 		double* OthersSimilarities = new double[OtherLyrCnt];	
 
-		double simiPointsX;// 程序生成的可替代点的坐标
+		double simiPointsX;// 候选样点的坐标
 		double simiPointsY;
 		Distance distance;
+		ReadCsv readCsv;
+		vector<double> csvFileX;
+		vector<double> csvFileY;
+		readCsv.getCsvContent("E:\\work\\soilSample\\similarity\\data\\training.csv");
+		csvFileX = readCsv.getCsvX();
+		csvFileY = readCsv.getCsvY();
 		
 		int candidateNeighborCnt = 0; //距离候选样点即可供选择的样点周围邻域内的像元个数		
 		double candidateSum = 0; //每个候选样点周围所有像元相似度的和	
@@ -232,8 +239,8 @@ void NeighborSimi::getNeighborAvgSimi(double *climateStd,double *geoStd,double *
 				// 如果图像中任意一点的相似度值和输入样点的相似度值之差小于0.02，就把此点作为候选样点
 				if (abs(similarityVals[rowIndex][colIndex] - similarityVals[rowIdx][colIdx]) < 0.02)
 				{
-					simiPointsX = lowerLeftX + (double)(colIdx * cellSize);//候选样点所对应的坐标x
-					simiPointsY = lowerLeftY + (double)(totalRows - rowIdx - 1) * cellSize;
+					//simiPointsX = lowerLeftX + (double)(colIdx * cellSize);//候选样点所对应的坐标x
+					//simiPointsY = lowerLeftY + (double)(totalRows - rowIdx - 1) * cellSize;
 					candidateRow.push_back(rowIdx);//将所有候选样点在图像上的行列号存入vector容器中
 					candidateCol.push_back(colIdx);
 					//cout<<simiPointsX<<","<<simiPointsY<<endl;	
@@ -353,17 +360,21 @@ void NeighborSimi::getNeighborAvgSimi(double *climateStd,double *geoStd,double *
 		for (int i = 0; i < candidateNum; i++)
 		{
 			cout<<"("<<candidateRow[i]<<","<<candidateCol[i]<<")"<<",";
-		}
-	/*	int index = 0;
-		double min = 9999;
-		for (int i = 0; i < candidateVariance.size(); i++)
-		{		
-			if (abs(sampleVariance - candidateVariance[i]) < min)
+		}	
+		cout<<endl;
+		for (int i = 0; i < candidateNum; i++)
+		{
+			simiPointsX = lowerLeftX + (double)(candidateCol[i] * cellSize);
+			simiPointsY = lowerLeftY + (double)(totalRows - candidateRow[i] - 1) * cellSize;
+			for (int j = 0; j < csvFileX.size(); j++)
 			{
-				min = abs(sampleVariance - candidateVariance[i]);
-				index = i;
-			}
-		}*/
+				if ((distance.getEucliDistance(simiPointsX, simiPointsY, csvFileX[j], csvFileY[j]) < 200) && abs(csvFileX[j] - curX) > 0.0001)
+				{
+					cout<<"这个候选样点不合适，距离其他布设样点太近: "<<simiPointsX<<","<<simiPointsY<<endl;
+					cout<<candidateRow[i]<<","<<candidateCol[i]<<endl;
+				}
+			}	
+		}	
 		
 
 		delete[] climateRules;
